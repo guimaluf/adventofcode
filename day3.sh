@@ -13,7 +13,7 @@ while read rucksack; do
   rcks2=${rucksack:${middle}}
 
   item=${rcks2//[^${rcks1}]/}
-  printf "%s %s\n%s %d\n\n" ${rcks1} ${rcks2} ${item::1} ${priority[${item::1}]}
+  printf "%s %s\n%s %d\n\n" ${rcks1} ${rcks2} ${item} ${priority[${item::1}]}
 
   sum=$((sum + ${priority[${item::1}]}))
 done
