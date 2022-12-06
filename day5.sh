@@ -7,12 +7,13 @@ while read ; do
   [[ $REPLY =~ ^\ 1 ]] && continue
   [[ $REPLY =~ ^$ ]] && break
 
-  for j in {0..9}; do
-    crate="${REPLY:$((1+4*j)):1}"
-    cargo[$j]+=${crate// /}
+  for i in {0..9}; do
+    crate="${REPLY:$((1+4*i)):1}"
+    cargo[$i]+=${crate// /}
   done
 done
 
+declare -a cargo2p=(${cargo[@]})
 re='move ([0-9]+) from ([0-9]) to ([0-9])'
 while read; do
   [[ $REPLY =~ $re ]]
@@ -22,13 +23,16 @@ while read; do
 
   # echo ${cargo[${from}]}  ${cargo[${to}]}
   # echo $REPLY
-  for i in $(seq $move); do
-    cargo[${to}]=${cargo[${from}]::1}${cargo[${to}]}
-    cargo[${from}]=${cargo[${from}]:1}
-  done
+  cargo[${to}]=$(rev <<<${cargo[${from}]::${move}})${cargo[${to}]}
+  cargo[${from}]=${cargo[${from}]:${move}}
+
+  cargo2p[${to}]=${cargo2p[${from}]::${move}}${cargo2p[${to}]}
+  cargo2p[${from}]=${cargo2p[${from}]:${move}}
 done
 
-for j in {0..9}; do
-  echo -n ${cargo[$j]::1}
+for i in {0..9}; do
+  cargo_result+=${cargo[$i]::1}
+  cargo2p_result+=${cargo2p[$i]::1}
 done
-echo
+echo ${cargo_result}
+echo ${cargo2p_result}
